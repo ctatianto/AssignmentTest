@@ -1,79 +1,169 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# KuCoin Login Application
 
-# Getting Started
+## Overview
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+This React Native application allows users to log in using a PIN and select a symbol from KuCoin's API. Upon successful authentication, users are redirected to a market data page.
 
-## Step 1: Start the Metro Server
+## Features
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+- **Symbol Selection:** Users can select a symbol from KuCoin's API.
+- **PIN Authentication:** Users must enter a valid PIN to authenticate.
+- **Error Handling:** Displays appropriate messages for errors such as invalid PIN or failed symbol fetching and error messages as needed.
+-  **Data Fetching:** Retrieves market data for a selected symbol.
+- **Data Processing:** Groups orders by price, calculates average prices and total sizes.
+- **Styled UI:** Presents data in a user-friendly format with styling.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+## Requirements
 
-```bash
-# using npm
-npm start
+- **Node.js** (for backend server)
+- **React Native** (for mobile app development)
+- **React Native CLI** (for running the React Native app)
+- **npm** (for package management)
 
-# OR using Yarn
-yarn start
-```
+## Dependencies
 
-## Step 2: Start your Application
+- **React Native**: For building the mobile app.
+- **axios**: For making HTTP requests.
+- **ActivityIndicator**: For showing loading indicators.
+- **ScrollView**: For displaying long lists of data.
+- **Navigation**: For navigation across the application.
+- **DropDownPicker**: For dropdown list picker of market data.
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
 
-### For Android
+## Setup
 
-```bash
-# using npm
-npm run android
+### Backend Setup
 
-# OR using Yarn
-yarn android
-```
+1. **Clone the backend repository:**
 
-### For iOS
+    ```bash
+    git clone https://github.com/ctatianto/server.git
+    cd your-backend-repository
+    ```
 
-```bash
-# using npm
-npm run ios
+2. **Install dependencies:**
 
-# OR using Yarn
-yarn ios
-```
+    ```bash
+    npm install <dependencies>
+    ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+3. **Start the backend server:**
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+    ```bash
+    node server,js
+    ```
 
-## Step 3: Modifying your App
+    Ensure the server is running on `http://localhost:3000`.
+    
+- **Backend URL:** `http://localhost:3000`
+- **Authentication Endpoint:** `/api/authenticate`
+- **Market Data Endpoint:** `https://api.kucoin.com/api/v1/market/orderbook/level2_100`
 
-Now that you have successfully run the app, let's modify it.
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+### Frontend Setup
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+1. **Clone the frontend repository:**
 
-## Congratulations! :tada:
+    ```bash
+    git clone https://github.com/ctatianto/AssignmentTest.git
+    cd your-frontend-repository
+    ```
 
-You've successfully run and modified your React Native App. :partying_face:
+2. **Install dependencies:**
 
-### Now what?
+    ```bash
+    npm install
+    ```
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+3. **Start the React Native application and run it on iOS simulator:**
 
-# Troubleshooting
+    ```bash
+    npm start
+    npx react-native run-ios
+    ```
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+    This will open Expo in your default web browser. Scan the QR code with the Expo Go app on your mobile device to run the app.
 
-# Learn More
+## Application Functionality
 
-To learn more about React Native, take a look at the following resources:
+### LoginScreen Component
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- **Fetch Symbols:** The component fetches symbols from KuCoin's API and populates a dropdown menu.
+- **Select Symbol:** Users can choose a symbol from the dropdown.
+- **Enter PIN:** Users must enter the PIN `Mys3cureP1n!123` for authentication.
+- **Login Handler:** Upon pressing the login button, the app sends a request to the backend server to authenticate the user.
+
+### Backend Authentication
+
+- **Endpoint:** `/api/authenticate`
+- **Method:** `POST`
+- **Request Body:**
+
+    ```json
+    {
+      "pin": "string",
+      "symbol": "string"
+    }
+    ```
+
+- **Response:**
+
+    - **Success (HTTP 200):**
+
+        ```json
+        {
+          "authtoken": "your-auth-token"
+        }
+        ```
+
+    - **Error (HTTP 401):**
+
+        ```json
+        {
+          "error": "Invalid PIN"
+        }
+        ```
+## Market Data Component
+### Component Details
+
+### Props
+
+- **authtoken**: The authentication token used for API requests.
+- **symbol**: The symbol for which market data is requested.
+
+### Functionality
+
+1. **Fetching Data:** The component fetches market data for the provided symbol using the KuCoin API and the given auth token.
+2. **Processing Orders:**
+    - **`processOrders(orders)`**: Groups orders by price and aggregates sizes.
+    - **`calculateAverage(orders)`**: Calculates average prices for bids and asks.
+3. **Displaying Data:**
+    - **Bids:** Displays grouped bid prices and sizes, average bid price, and total bid size.
+    - **Asks:** Displays grouped ask prices and sizes, average ask price, and total ask size.
+4. **Error Handling:** Shows an error message if data fetching fails.
+## Error Handling
+
+- **Symbol Fetch Error:** Displays an alert if symbols cannot be fetched from KuCoin's API.
+- **PIN Authentication Error:** Displays an alert if the PIN entered is incorrect.
+
+## Running the Application
+
+1. **Start the backend server** (ensure it's running on `http://localhost:3000`).
+2. **Start the React Native app** using React Native CLI.
+3. **Run on iOS Simulator** ``` npx react-native run-ios    ```
+
+## Testing
+
+- **Unit Tests:** Implement and run unit tests for the React Native components and backend API.
+- **Integration Tests:** Ensure that the frontend and backend communicate correctly.
+
+## Contributing
+
+If you would like to contribute to this project, please fork the repository and submit a pull request with your changes.
+
+## Contact
+
+For any questions or feedback, please contact [chandra.tatianto@gmail.com](mailto:chandra.tatianto@gmail.com).
+
+---
+
