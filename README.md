@@ -1,4 +1,4 @@
-# KuCoin Login Application
+# Assignment Application
 
 ## Overview
 
